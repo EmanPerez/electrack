@@ -90,6 +90,28 @@
         });
       return false;
     }
+
+    document.getElementById('google-signin-btn').onclick = function() {
+      var provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+          var user = result.user;
+          // Add user to Realtime Database if not already present
+          firebase.database().ref('users/' + user.uid).once('value').then(function(snapshot) {
+            if (!snapshot.exists()) {
+              firebase.database().ref('users/' + user.uid).set({
+                email: user.email,
+                createdAt: new Date().toISOString(),
+                provider: 'google'
+              });
+            }
+            window.location.href = 'index.html';
+          });
+        })
+        .catch(function(error) {
+          document.getElementById('error-message').textContent = 'Google sign-in failed. Please try again.';
+        });
+    };
   </script>
 </body>
 </html>
