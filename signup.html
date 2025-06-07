@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - ElecTrack</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="firebase.js"></script>
+</head>
+
+<style>
+   body{
+  min-height: 100vh;
+  background-image: url(images/SignupBg.jpg);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  display: flex;
+  justify-content: left;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.input-icon-bg {
+  background: #21e065;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 0 0 8px;
+}
+.input-icon-bg svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+  display: block;
+}
+.input-row input {
+  height: 48px;
+  border: none;
+  outline: none;
+  background: #f5f4ff;
+  border-radius: 0 12px 12px 0;
+  padding: 0 16px;
+  font-size: 1em;
+  color: #222;
+  width: 100%;
+}
+</style>
+
+<body>
+
+  <div class="wrapper">
+    <img src="images/ElecTrackLogo.jpg" class="logo" alt="ElecTrack Logo">
+    <h1>Sign Up</h1>
+    <p id="verify-message" style="color:green;"></p>
+    <p id="error-message"></p>
+    
+    <form id="signup-form" onsubmit="return handleSignup(event)">
+      <div>
+        <label for="signup-email">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input type="email" id="signup-email" placeholder="Email" required>
+      </div>
+      <div>
+        <label for="signup-password">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+        </label>
+        <input type="password" id="signup-password" placeholder="Password (min 6 chars)" required minlength="6">
+      </div>
+      <div>
+        <label for="signup-confirm">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+        </label>
+        <input type="password" id="signup-confirm" placeholder="Confirm Password" required minlength="6">
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <script>
+    function handleSignup(event) {
+      event.preventDefault();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+      const errorMsg = document.getElementById('error-message');
+      const verifyMsg = document.getElementById('verify-message');
+      errorMsg.textContent = '';
+      verifyMsg.textContent = '';
+      if (!email || !password || !confirm) {
+        errorMsg.textContent = 'Please fill in all fields.';
+        return false;
+      }
+      if (password.length < 6) {
+        errorMsg.textContent = 'Password must be at least 6 characters.';
+        return false;
+      }
+      if (password !== confirm) {
+        errorMsg.textContent = 'Passwords do not match.';
+        return false;
+      }
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // Write user data to Realtime Database
+          firebase.database().ref('users/' + user.uid).set({
+            email: user.email,
+            createdAt: new Date().toISOString()
+          }).then(() => {
+            user.sendEmailVerification().then(() => {
+              verifyMsg.textContent = 'Verification email sent! Please check your inbox and verify your email before logging in.';
+              firebase.auth().signOut();
+            });
+          });
+        })
+        .catch((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            errorMsg.textContent = 'Email is already in use.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMsg.textContent = 'Invalid email address.';
+          } else {
+            errorMsg.textContent = error.message;
+          }
+        });
+      return false;
+    }
+  </script>
+</body>
+</html>

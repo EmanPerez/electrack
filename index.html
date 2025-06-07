@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>ElecTrack</title>
+    <script src="script.js" defer></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>ElecTrack</h1>
+        </div>
+        <div class="nav-items">
+            <button onclick="toggleDarkMode()" class="dark-mode-btn" id="darkModeBtn" aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" id="darkIcon" style="display:none"></i>
+                <i class="fa-solid fa-sun" id="lightIcon"></i>
+            </button>
+            <a href="#" onclick="logout()" class="logout-btn" aria-label="Log out">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="calculator-section">
+          <div class="input-group">
+            <label for="applianceName">Appliance Name:</label>
+            <input type="text" id="applianceName" placeholder="Example: Air Conditioner" required>
+
+            <label for="wattage">Wattage (W):</label>
+            <input type="number" id="wattage" placeholder="Example: 10" min="1" step="any" required>
+
+            <label for="hours">Hours Used Per Day:</label>
+            <input type="number" id="hours" placeholder="Example: 5" min="0.01" step="any" required>
+
+            <label for="duration">Duration:</label>
+            <select id="duration" onchange="toggleMultiplierInput()" required>
+              <option value="hour">Hour</option>
+              <option value="day">Day</option>
+              <option value="week">Week</option>
+              <option value="month">Month</option>
+            </select>
+
+            <div id="multiplierContainer" class="hidden">
+              <label for="multiplier">Number of selected durations:</label>
+              <input type="number" id="multiplier" placeholder="e.g., 3" min="1">
+            </div>
+
+            <label>
+              <input type="checkbox" id="applianceTax"> Include Franchise Tax
+            </label>
+
+            <button onclick="calculateApplianceCost()" class="calculate-btn">Calculate Energy Cost</button>
+          </div>
+
+          <div id="applianceResult" class="result"></div>
+        </div>
+
+        <!-- Cost List Section -->
+        <div class="cost-list-section">
+          <h3>Calculated Costs</h3>
+          <table id="costListTable" class="cost-list-table">
+            <thead>
+              <tr>
+                <th>Appliance Name</th>
+                <th>Duration</th>
+                <th>Energy Used (kWh)</th>
+                <th>Rate per kWh</th>
+                <th>Total Cost</th>
+                <th>Franchise Tax</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="actions button-container">
+          <button onclick="exportCostListPDF()">Export Results as PDF</button>
+          <button onclick="resetFields()">Reset Calculator</button>
+          <button onclick="clearCostTable()">Clear Table</button>
+        </div>
+
+        <div class="tutorial-section">
+          <h3>How to Use the Calculator</h3>
+          <div class="tutorial-steps">
+            <div class="step">
+              <h4>Step 1: Enter Appliance Details</h4>
+              <p>Enter the name of your appliance and its wattage. You can find the wattage on the appliance's label or manual. Common examples:</p>
+              <ul>
+                <li>Air Conditioner: 1000-3500W</li>
+                <li>Refrigerator: 100-400W</li>
+                <li>LED TV: 30-100W</li>
+                <li>Washing Machine: 300-500W</li>
+              </ul>
+            </div>
+
+            <div class="step">
+              <h4>Step 2: Set Usage Duration</h4>
+              <p>Specify how many hours per day you use the appliance and select the time period you want to calculate for:</p>
+              <ul>
+                <li>Hour: For one-time usage</li>
+                <li>Day: For daily usage</li>
+                <li>Week: For weekly usage</li>
+                <li>Month: For monthly usage</li>
+              </ul>
+            </div>
+
+            <div class="step">
+              <h4>Step 3: Additional Options</h4>
+              <p>Check the "Include Franchise Tax" box if you want to include the 3% franchise tax in your calculation.</p>
+            </div>
+
+            <div class="step">
+              <h4>Step 4: View Results</h4>
+              <p>The calculator will show you:</p>
+              <ul>
+                <li>Total energy cost in Philippine Pesos (₱)</li>
+                <li>Total energy consumption in kilowatt-hours (kWh)</li>
+                <li>Rate per kilowatt-hour</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ElecTrack. All rights reserved.</p>
+    </footer>
+    <script>
+        // Check Firebase authentication on page load
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        });
+        // Logout function
+        function logout() {
+            firebase.auth().signOut().then(function() {
+                window.location.href = 'login.html';
+            });
+        }
+    </script>
+</body>
+</html>

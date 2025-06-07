@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElecTrack</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="firebase.js"></script>
+</head>
+
+<style>
+   body{
+  min-height: 100vh;
+  background-image: url(images/background.jpg);
+  background-size: cover;
+  background-position: bottom;
+  overflow: hidden;
+  display: flex;
+  justify-content: left;
+}
+</style>
+
+<body>
+  
+  <div class="wrapper">
+
+    <img src="images/ElecTrackLogo.jpg" class="logo" alt="ElecTrack Logo">
+    <h1>ElecTrack</h1>
+    <p id="error-message"></p>
+
+    <form id="form" onsubmit="return handleLogin(event)">
+    <div>
+        <label for="username-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/></svg>
+        </label>
+        <input type="email" name="username" id="username-input" placeholder="Email" required>
+      </div>
+
+      <div>
+        <label for="password-input">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm240-200q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80Z"/></svg>
+        </label>
+        <input type="password" name="password" id="password-input" placeholder="Password" required>
+      </div>
+
+      <button type="submit" name="login_user">Login</button>
+    </form>
+
+    <div id="verify-message" style="color:red;"></div>
+
+    <p>New here? <a href="signup.html">Create an Account</a></p>
+    <p>Forgot Password? <a href="forgot.html" id="forgot-password-link">Reset Password</a></p>
+  </div>
+
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('username-input').value.trim();
+      const password = document.getElementById('password-input').value;
+      const errorMsg = document.getElementById('error-message');
+      const verifyMsg = document.getElementById('verify-message');
+      errorMsg.textContent = '';
+      verifyMsg.textContent = '';
+      if (!email || !password) {
+        errorMsg.textContent = 'Please enter both email and password.';
+        return false;
+      }
+      // Firebase sign in
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          if (user.emailVerified) {
+            window.location.href = 'index.html';
+          } else {
+            verifyMsg.textContent = 'Please verify your email address before logging in.';
+            firebase.auth().signOut();
+          }
+        })
+        .catch((error) => {
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {
+            errorMsg.textContent = 'Invalid email or password. Please try again.';
+          } else if (error.code === 'auth/invalid-email') {
+            errorMsg.textContent = 'Invalid email address.';
+          } else {
+            errorMsg.textContent = 'An error occurred. Please try again.';
+          }
+        });
+      return false;
+    }
+  </script>
+</body>
+</html>

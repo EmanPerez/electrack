@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+:root{
+  --accent-color: #2dd335;
+  --base-color: #ffffff;
+  --text-color: #2E2B41;
+  --input-color: #F3F0FF;
+  --header-color: #62f85f;
+  color-scheme: light dark;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+html{
+  font-family: Poppins, Segoe UI, sans-serif;
+  font-size: 12pt;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.logo {
+  max-height: 240px;
+  max-width: 240px;
+}
+
+div.wrapper{
+  box-sizing: border-box;
+  background-color: var(--base-color);
+  min-height: 100vh;
+  height: auto;
+  width: max(40%, 600px);
+  padding: 10px;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  position: relative;
+}
+
+h1{
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding-top: 0;
+}
+
+form{
+  width: min(400px, 100%);
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+form > div{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+form label{
+  flex-shrink: 0;
+  height: 50px;
+  width: 50px;
+  background-color: var(--accent-color);
+  fill: var(--base-color);
+  color: var(--base-color);
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+form input{
+  box-sizing: border-box;
+  flex-grow: 1;
+  min-width: 0;
+  height: 50px;
+  padding: 1em;
+  font: inherit;
+  border-radius: 0 10px 10px 0;
+  border: 2px solid var(--input-color);
+  border-left: none;
+  background-color: var(--input-color);
+  transition: 150ms ease;
+}
+
+form input:hover{
+  border-color: var(--accent-color);
+}
+
+form input:focus{
+  outline: none;
+  border-color: var(--text-color);
+}
+
+div:has(input:focus) > label{
+  background-color: var(--text-color);
+}
+
+form input::placeholder{
+  color: var(--text-color);
+}
+
+form button{
+  margin-top: 10px;
+  border: none;
+  border-radius: 1000px;
+  padding: .85em 4em;
+  background-color: var(--accent-color);
+  color: var(--base-color);
+  font: inherit;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 150ms ease;
+}
+
+form button:hover{
+  background-color: var(--text-color);
+}
+
+form button:focus{
+  outline: none;
+  background-color: var(--text-color);
+}
+
+a{
+  text-decoration: none;
+  color: var(--accent-color);
+}
+
+a:hover{
+  text-decoration: underline;
+}
+
+@media(max-width: 1100px){
+  .wrapper{
+    width: min(600px, 100%);
+    border-radius: 0;
+    min-height: 100vh;
+    height: auto;
+  }
+}
+
+@media(max-width: 768px) {
+  div.wrapper {
+    width: 100%;
+    padding: 20px 10px;
+  }
+
+  form {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  form label {
+    height: 45px;
+    width: 45px;
+    font-size: 1.2rem;
+  }
+
+  form input {
+    height: 45px;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .logo {
+    max-height: 180px;
+    max-width: 180px;
+  }
+}
+
+@media(max-width: 480px) {
+  div.wrapper {
+    padding: 15px 5px;
+  }
+
+  form {
+    gap: 8px;
+  }
+
+  form label {
+    height: 40px;
+    width: 40px;
+    font-size: 1rem;
+  }
+
+  form input {
+    height: 40px;
+    font-size: 0.85rem;
+    padding: 0.8em;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .logo {
+    max-height: 150px;
+    max-width: 150px;
+  }
+
+  form button {
+    padding: 0.7em 3em;
+    font-size: 0.9rem;
+  }
+}
+
+@media(max-height: 600px) {
+  div.wrapper {
+    padding: 10px 5px;
+  }
+
+  form {
+    margin-bottom: 10px;
+    gap: 5px;
+  }
+
+  .logo {
+    max-height: 120px;
+    max-width: 120px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+}
+
+form div.incorrect label,
+form#forgot-form div.incorrect label {
+  background-color: #f06272 !important;
+}
+form div.incorrect input,
+form#forgot-form div.incorrect input {
+  border-color: #f06272 !important;
+}
+
+#error-message{
+  color:#f06272;
+}
+
+.error {
+  color: #f06272;
+  font-weight: 500;
+  margin-bottom: 1em;
+  font-size: 1.1em;
+}
