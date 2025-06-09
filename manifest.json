@@ -1,10 +1,9 @@
 {
   "icons": [
     {
-      "src": "favicon (1).ico",
+      "src": "favicon.ico",
       "sizes": "16x16",
-      "type": "image/ico"
+      "type": "image/x-icon"
     }
-    
   ]
 }
